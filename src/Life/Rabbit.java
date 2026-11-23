@@ -24,8 +24,13 @@ public class Rabbit implements Actor {
             w.delete(w.getNonBlocking(w.getLocation(this)));
             energy =  energy +2;
         }
-        if(w.getEntities(w.getSurroundingTiles(w.getLocation(this))) instanceof Rabbit) {
-
+        for(Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
+            if(w.getTile(neighbour) instanceof Rabbit) {
+                if(!list.isEmpty() && r.nextInt(10) > 8) {
+                    Location l = list.get(r.nextInt(list.size()));
+                    w.setTile(l, new Rabbit());
+                }
+            }
         }
 
         energy--;
