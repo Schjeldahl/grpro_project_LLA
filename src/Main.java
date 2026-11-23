@@ -7,44 +7,59 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Main {
 
-    public static void main(String[] args) {
-        int size = 5;
+    public static void main(String[] args) throws FileNotFoundException{
+
+        Scanner scanner = new Scanner(new File("inputs/week-1/t1-1a.txt"));
+
+        int size = Integer.parseInt(scanner.nextLine().trim());
         int delay = 1000;
         int display_size = 1000;
-        int amountGrass = 5;
-
         Random r = new Random();
-
         Program p = new Program(size, display_size, delay);
-
         World w = p.getWorld();
+        Placement placement = new Placement(w, size);
 
-        Location rab = new Location(1,1);
-        w.setTile(rab, new Rabbit());
+        //Indlæsning og placering af objeketer (se evt. Placement.java)
 
-        for(int i = 0; i < amountGrass; i++) {
-            int x = r.nextInt(size);
-            int y = r.nextInt(size);
-            Location l = new Location(x,y);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            String[] parts = line.trim().split("\s+");
+            String type = parts[0];
+            String amountText = parts[1];
+            int amount;
 
-            while(w.containsNonBlocking(l)) {
-                x = r.nextInt(size);
-                y = r.nextInt(size);
-                l = new Location(x,y);
+            if (amountText.contains("-")) {
+                String[] bounds = amountText.split("-");
+                int min = Integer.parseInt(bounds[0]);
+                int max = Integer.parseInt(bounds[1]);
+
+                amount = min + r.nextInt(max - min + 1);
+            } else {
+                amount = Integer.parseInt(amountText);
             }
-            w.setTile(l, new Grass());
+
+            for (int i = 0; i < amount; i++) {
+                switch (type) {
+                    case "grass":
+                        placement.placeNonBlocking(new Grass());
+                        break;
+                    case "rabbit":
+                        placement.placeBlocking(new Rabbit());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Ukendt type: " + type);
+                }}
         }
 
-
-        // w.setTile(new Location(0, 0), new <MyClass>());
-
-        // p.setDisplayInformation(<MyClass>.class, new DisplayInformation(<Color>, "<ImageName>"));
-        DisplayInformation grass = new DisplayInformation(Color.green);
+        DisplayInformation grass = new DisplayInformation(Color.green, "grass");
         p.setDisplayInformation(Grass.class, grass);
-        DisplayInformation rabbit = new DisplayInformation(Color.black);
+        DisplayInformation rabbit = new DisplayInformation(Color.black, "rabbit-small");
         p.setDisplayInformation(Rabbit.class, rabbit);
         p.show();
         for (int i = 0; i < 200; i++) {
@@ -52,19 +67,4 @@ public class Main {
         }
 
     }
-    /*public static void placeNonBlocking(int amount, Object object) {
-        int size = w.
-        for(int i = 0; i < amount; i++) {
-            int x = r.nextInt(size);
-            int y = r.nextInt(size);
-            Location l = new Location(x,y);
-
-            while(w.containsNonBlocking(l)) {
-                x = r.nextInt(size);
-                y = r.nextInt(size);
-                l = new Location(x,y);
-            }
-            w.setTile(l, new Object());
-        }
-    }*/
 }
