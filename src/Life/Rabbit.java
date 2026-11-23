@@ -25,9 +25,11 @@ public class Rabbit implements Actor {
             energy =  energy +2;
         }
         for(Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
+            Set<Location> empty = w.getEmptySurroundingTiles();
+            List<Location> list2 = new ArrayList<>(empty);
             if(w.getTile(neighbour) instanceof Rabbit) {
-                if(!list.isEmpty() && r.nextInt(10) > 8) {
-                    Location l = list.get(r.nextInt(list.size()));
+                if(!list2.isEmpty() && r.nextInt(10) > 8) {
+                    Location l = list2.get(r.nextInt(list2.size()));
                     w.setTile(l, new Rabbit());
                 }
             }
