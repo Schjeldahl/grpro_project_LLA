@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
 
-        Scanner scanner = new Scanner(new File("inputs/week-1/t1-3b.txt"));
+        Scanner scanner = new Scanner(new File("inputs/week-1/t1-2cde.txt"));
 
         int size = Integer.parseInt(scanner.nextLine().trim());
         int delay = 1000;
