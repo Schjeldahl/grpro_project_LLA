@@ -2,10 +2,10 @@ import java.awt.Color;
 import java.util.*;
 
 import Life.Grass;
+import Life.Burrow;
 import Life.Rabbit;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
-import itumulator.world.Location;
 import itumulator.world.World;
 import java.util.Scanner;
 import java.io.File;
@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
 
-        Scanner scanner = new Scanner(new File("inputs/week-1/t1-1c.txt"));
+        Scanner scanner = new Scanner(new File("inputs/week-1/t1-3b.txt"));
 
         int size = Integer.parseInt(scanner.nextLine().trim());
         int delay = 1000;
@@ -55,6 +55,9 @@ public class Main {
                     case "rabbit":
                         placement.placeBlocking(new Rabbit());
                         break;
+                    case "burrow":
+                        placement.placeNonBlocking(new Burrow());
+                        break;
                     default:
                         throw new IllegalArgumentException("Ukendt type: " + type);
                 }}
@@ -64,6 +67,8 @@ public class Main {
         p.setDisplayInformation(Grass.class, grass);
         DisplayInformation rabbit = new DisplayInformation(Color.black, "rabbit-small");
         p.setDisplayInformation(Rabbit.class, rabbit);
+        DisplayInformation burrow = new DisplayInformation(Color.blue, "hole");
+        p.setDisplayInformation(Burrow.class, burrow);
         p.show();
         for (int i = 0; i < 200; i++) {
             p.simulate();
