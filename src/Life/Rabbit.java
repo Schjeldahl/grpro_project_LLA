@@ -24,6 +24,9 @@ public class Rabbit implements Actor {
             w.delete(w.getNonBlocking(w.getLocation(this)));
             energy =  energy +2;
         }
+        if(w.getEntities(w.getSurroundingTiles(w.getLocation(this))) instanceof Rabbit) {
+
+        }
 
         energy--;
         if(energy == 0) {
