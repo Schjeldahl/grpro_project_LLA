@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
 
-        Scanner scanner = new Scanner(new File("inputs/week-1/t1-1a.txt"));
+        Scanner scanner = new Scanner(new File("inputs/week-1/t1-1c.txt"));
 
         int size = Integer.parseInt(scanner.nextLine().trim());
         int delay = 1000;
@@ -29,6 +29,9 @@ public class Main {
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
+            if (line.isEmpty()) {
+                continue;
+            }
             String[] parts = line.trim().split("\s+");
             String type = parts[0];
             String amountText = parts[1];
