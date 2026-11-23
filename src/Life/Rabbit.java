@@ -24,6 +24,7 @@ public class Rabbit implements Actor {
             w.delete(w.getNonBlocking(w.getLocation(this)));
             energy =  energy +2;
         }
+
         energy--;
         if(energy == 0) {
             w.delete(this);
