@@ -15,6 +15,7 @@ public class Main {
         int delay = 1000;
         int display_size = 1000;
         int amountGrass = 5;
+        int amountRabbit = 3;
 
         Random r = new Random();
 
@@ -26,16 +27,12 @@ public class Main {
         w.setTile(rab, new Rabbit());
 
         for(int i = 0; i < amountGrass; i++) {
-            int x = r.nextInt(size);
-            int y = r.nextInt(size);
-            Location l = new Location(x,y);
-
-            while(w.containsNonBlocking(l)) {
-                x = r.nextInt(size);
-                y = r.nextInt(size);
-                l = new Location(x,y);
-            }
+            Location l = randomLocation(size, r, w);
             w.setTile(l, new Grass());
+        }
+        for(int i = 0; i < amountRabbit; i++) {
+            Location l = randomLocation(size, r, w);
+            w.setTile(l, new Rabbit());
         }
 
 
@@ -51,6 +48,19 @@ public class Main {
             p.simulate();
         }
 
+    }
+
+    private static Location randomLocation(int size, Random r, World w) {
+        int x = r.nextInt(size);
+        int y = r.nextInt(size);
+        Location l = new Location(x,y);
+
+        while(w.containsNonBlocking(l)) {
+            x = r.nextInt(size);
+            y = r.nextInt(size);
+            l = new Location(x,y);
+        }
+        return l;
     }
     /*public static void placeNonBlocking(int amount, Object object) {
         int size = w.
