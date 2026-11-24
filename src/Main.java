@@ -67,7 +67,7 @@ public class Main {
         p.setDisplayInformation(Grass.class, grass);
         DisplayInformation rabbit = new DisplayInformation(Color.black, "rabbit-small");
         p.setDisplayInformation(Rabbit.class, rabbit);
-        DisplayInformation burrow = new DisplayInformation(Color.blue, "hole");
+        DisplayInformation burrow = new DisplayInformation(Color.blue, "hole-small");
         p.setDisplayInformation(Burrow.class, burrow);
         p.show();
         for (int i = 0; i < 200; i++) {
