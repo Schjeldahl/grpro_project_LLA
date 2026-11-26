@@ -60,26 +60,51 @@ public class Rabbit implements Actor {
             return;
         }
 
-        Set<Location> neighbours = w.getEmptySurroundingTiles();
-        List<Location> list = new ArrayList<>(neighbours);
-        age++;
-        if(!list.isEmpty()) {
-            Location l = list.get(r.nextInt(list.size()));
-            w.move(this, l);
-        }
+        moveRabbit(w);
+        eatGrass(w);
+        digBurrow(w);
+        reproduction(w);
+
+        energy--;
+
+        die(w);
+
+
+
+    }
+
+    /** This method gives the rabbit the ability to eat grass and determines how much
+     * energy they get depending on their age
+     * @param w
+     */
+    public void eatGrass(World w) {
         if(w.getNonBlocking(w.getLocation(this)) instanceof Grass) {
             w.delete(w.getNonBlocking(w.getLocation(this)));
-            if(age <= 3) {
+            if (age <= 3) {
                 energy = energy + 3;
-            } else if(age <= 6) {
+            } else if (age <= 6) {
                 energy = energy + 2;
-            }else {
+            } else {
                 energy = energy + 1;
             }
-            if(r.nextInt(10) > 8) {
-                w.setTile(w.getLocation(this), new Burrow());
-            }
         }
+    }
+
+    /** This method gives the rabbits a 10% chance to dig a burrow everytime it is
+     * called
+      * @param w
+     */
+    public void digBurrow(World w) {
+        if(r.nextInt(10) > 8) {
+            w.setTile(w.getLocation(this), new Burrow());
+        }
+    }
+
+    /** This method gives the rabbits a 10% chance to reproduce if they are
+     * standing next to another rabbit
+     * @param w
+     */
+    public void reproduction(World w) {
         for(Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
             Set<Location> empty = w.getEmptySurroundingTiles();
             List<Location> list2 = new ArrayList<>(empty);
@@ -90,13 +115,29 @@ public class Rabbit implements Actor {
                 }
             }
         }
+    }
 
-        energy--;
+    /** This method makes the rabbit able to move to an unoccupied location
+     *
+     * @param w
+     */
+    public void moveRabbit(World w) {
+        Set<Location> neighbours = w.getEmptySurroundingTiles();
+        List<Location> list = new ArrayList<>(neighbours);
+        age++;
+        if(!list.isEmpty()) {
+            Location l = list.get(r.nextInt(list.size()));
+            w.move(this, l);
+        }
+    }
+
+    /** This method makes a rabbit die if it is out of energy
+     *
+     * @param w
+     */
+    public void die(World w) {
         if(energy == 0) {
             w.delete(this);
         }
-
-
-
     }
 }
