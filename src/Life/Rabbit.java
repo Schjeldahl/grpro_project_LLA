@@ -11,58 +11,29 @@ import java.util.Random;
 
 public class Rabbit implements Actor {
     private int  age = 0;
-    private int energy = 10;
+    private int energy = 100;
     private Burrow homeBurrow;
     Random r = new Random();
     @Override
     public void act(World w){
+        age++;
 
-        if (!w.isOnTile(this)) {
-            if (w.isNight()) {
-                return;
-            }
-
-            Location entrance = w.getLocation(homeBurrow);
-            Set<Location> exits = w.getEmptySurroundingTiles(entrance);
-
-            if (!exits.isEmpty()) {
-                w.setTile(exits.iterator().next(), this);
-            }
-
+        if(!w.isOnTile(this)) {
+            wakeUp(w);
             return;
         }
 
-        if (homeBurrow == null){
-            List<Burrow> burrows = new ArrayList<>();
-
-            for (var entry : w.getEntities().entrySet()) {
-                if (entry.getKey() instanceof Burrow burrow && entry.getValue() != null) {
-                    burrows.add(burrow);
-                }
-            }
-            if (!burrows.isEmpty()) {
-                homeBurrow = burrows.get(r.nextInt(burrows.size()));
-            }
-
-        }
-
-
-        if (w.isNight() && homeBurrow != null) {
-            Location entrance = w.getLocation(homeBurrow);
-
-            if (w.getLocation(this).equals(entrance)) {
-                w.remove(this);
-            } else if (w.getTile(entrance) == homeBurrow) {
-                w.move(this, entrance);
-                w.remove(this);
-            }
-
+        goHome(w);
+        if(!w.isOnTile(this)) {
             return;
         }
 
         moveRabbit(w);
+
         eatGrass(w);
-        digBurrow(w);
+
+        findOrDigHomeBurrow(w);
+
         reproduction(w);
 
         energy--;
@@ -74,7 +45,7 @@ public class Rabbit implements Actor {
 
     /** This method gives the rabbit the ability to eat grass and determines how much
      * energy they get depending on their age
-     * @param w
+     * @param w This parameter tells the method which world it's working in
      */
     public void eatGrass(World w) {
         if(w.getNonBlocking(w.getLocation(this)) instanceof Grass) {
@@ -89,23 +60,15 @@ public class Rabbit implements Actor {
         }
     }
 
-    /** This method gives the rabbits a 10% chance to dig a burrow everytime it is
-     * called
-      * @param w
-     */
-    public void digBurrow(World w) {
-        if(r.nextInt(10) > 8) {
-            w.setTile(w.getLocation(this), new Burrow());
-        }
-    }
+
 
     /** This method gives the rabbits a 10% chance to reproduce if they are
      * standing next to another rabbit
-     * @param w
+     * @param w This parameter tells the method which world it's working in
      */
     public void reproduction(World w) {
         for(Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
-            Set<Location> empty = w.getEmptySurroundingTiles();
+            Set<Location> empty = w.getEmptySurroundingTiles(w.getLocation(this));
             List<Location> list2 = new ArrayList<>(empty);
             if(w.getTile(neighbour) instanceof Rabbit) {
                 if(!list2.isEmpty() && r.nextInt(10) > 8) {
@@ -118,12 +81,11 @@ public class Rabbit implements Actor {
 
     /** This method makes the rabbit able to move to an unoccupied location
      *
-     * @param w
+     * @param w This parameter tells the method which world it's working in
      */
     public void moveRabbit(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles();
         List<Location> list = new ArrayList<>(neighbours);
-        age++;
         if(!list.isEmpty()) {
             Location l = list.get(r.nextInt(list.size()));
             w.move(this, l);
@@ -132,11 +94,70 @@ public class Rabbit implements Actor {
 
     /** This method makes a rabbit die if it is out of energy
      *
-     * @param w
+     * @param w This parameter tells the method which world it's working in
      */
     public void die(World w) {
         if(energy == 0) {
             w.delete(this);
+        }
+    }
+
+    /** This method makes a rabbit find or dig a home burrow
+     *
+     * @param w This parameter tells the method which world it's working in
+     */
+    private void findOrDigHomeBurrow(World w) {
+        if (homeBurrow != null && w.contains(homeBurrow) && w.isOnTile(homeBurrow)) {
+            return;
+        }
+
+        homeBurrow = null;
+        Location l = w.getLocation(this);
+        Object ground = w.getNonBlocking(l);
+
+        if (ground instanceof Burrow burrow) {
+            homeBurrow = burrow;
+        } else if (ground == null && r.nextInt(10) == 0) {
+            Burrow burrow = new Burrow();
+            w.setTile(l, burrow);
+            homeBurrow = burrow;
+        }
+    }
+
+    /** This method makes the rabbit go to its burrow when it is night
+     *
+     * @param w This parameter tells the method which world it's working in
+     */
+    public void goHome(World w) {
+        if (w.isNight() && homeBurrow != null) {
+            Location entrance = w.getLocation(homeBurrow);
+
+            if (w.getLocation(this).equals(entrance)) {
+                w.remove(this);
+            } else if (w.getTile(entrance) == homeBurrow) {
+                w.move(this, entrance);
+                w.remove(this);
+            }
+        }
+    }
+
+    /** This method places the rabbit back on the world when it turns to day
+     *
+     * @param w This parameter tells the method which world it's working in
+     */
+    public void wakeUp(World w) {
+        if (!w.isOnTile(this)) {
+            if (w.isNight()) {
+                return;
+            }
+
+            Location entrance = w.getLocation(homeBurrow);
+            Set<Location> exits = w.getEmptySurroundingTiles(entrance);
+
+            if (!exits.isEmpty()) {
+                w.setTile(exits.iterator().next(), this);
+            }
+
         }
     }
 }
