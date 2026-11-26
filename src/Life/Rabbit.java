@@ -66,7 +66,6 @@ public class Rabbit implements Actor {
         reproduction(w);
 
         energy--;
-
         die(w);
 
 
