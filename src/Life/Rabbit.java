@@ -23,6 +23,7 @@ public class Rabbit implements Actor {
             return;
         }
 
+        findOrDigHomeBurrow(w);
         goHome(w);
         if(!w.isOnTile(this)) {
             return;
@@ -32,7 +33,6 @@ public class Rabbit implements Actor {
 
         eatGrass(w);
 
-        findOrDigHomeBurrow(w);
 
         reproduction(w);
 
@@ -112,6 +112,19 @@ public class Rabbit implements Actor {
         }
 
         homeBurrow = null;
+        if(w.isNight()) {
+            List<Burrow> burrows = new ArrayList<>();
+
+            for(var entry : w.getEntities().entrySet()) {
+                if(entry.getKey() instanceof Burrow burrow && entry.getValue() != null) {
+                    burrows.add(burrow);
+                }
+            }
+            if(!burrows.isEmpty()) {
+                homeBurrow = burrows.get(r.nextInt(burrows.size()));
+            }
+            return;
+        }
         Location l = w.getLocation(this);
         Object ground = w.getNonBlocking(l);
 
@@ -151,13 +164,16 @@ public class Rabbit implements Actor {
                 return;
             }
 
-            Location entrance = w.getLocation(homeBurrow);
-            Set<Location> exits = w.getEmptySurroundingTiles(entrance);
+            if(homeBurrow != null && w.contains(homeBurrow) && w.isOnTile(homeBurrow)) {
+                Location entrance = w.getLocation(homeBurrow);
+                Set<Location> exits = w.getEmptySurroundingTiles(entrance);
 
-            if (!exits.isEmpty()) {
-                w.setTile(exits.iterator().next(), this);
+                if (!exits.isEmpty()) {
+                    w.setTile(exits.iterator().next(), this);
+                }
+            } else {
+                w.delete(this);
             }
-
         }
     }
 }
