@@ -21,7 +21,6 @@ public class Bear extends Animals{
         die(w);
     }
 
-    @Override
     public void mate(World w) {
         for (Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
             Set<Location> empty = w.getEmptySurroundingTiles(w.getLocation(this));
@@ -29,7 +28,7 @@ public class Bear extends Animals{
             if (w.getTile(neighbour) instanceof Bear) {
                 if (!list2.isEmpty() && super.getAge()>=5) {
                     Location l = list2.get(r.nextInt(list2.size()));
-                    w.setTile(l, new Bear(0, 10, null));
+                    w.setTile(l, new Bear());
                 }
             }
         }
@@ -44,7 +43,10 @@ public class Bear extends Animals{
             Location l = list.get(r.nextInt(list.size()));
             w.move(this, l);
         }
-        energy--;
+        super.gainEnergy(-1);
     }
 
+    public void eat(World w) {
+
+    }
 }
