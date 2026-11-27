@@ -4,6 +4,8 @@ import java.util.*;
 import Life.Grass;
 import Life.Burrow;
 import Life.Rabbit;
+import Life.Wolf;
+import Life.Bear;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.World;
@@ -15,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
 
-        Scanner scanner = new Scanner(new File("inputs/week-1/t1-2cde.txt"));
+        Scanner scanner = new Scanner(new File("inputs/week-2/tf2-2.txt"));
 
         int size = Integer.parseInt(scanner.nextLine().trim());
         int delay = 1000;
@@ -53,10 +55,16 @@ public class Main {
                         placement.placeNonBlocking(new Grass());
                         break;
                     case "rabbit":
-                        placement.placeBlocking(new Rabbit());
+                        placement.placeBlocking(new Rabbit(0, 10, null));
                         break;
                     case "burrow":
                         placement.placeNonBlocking(new Burrow());
+                        break;
+                    case "wolf":
+                        placement.placeBlocking(new Wolf());
+                        break;
+                    case "bear":
+                        placement.placeBlocking(new Bear());
                         break;
                     default:
                         throw new IllegalArgumentException("Ukendt type: " + type);
@@ -69,6 +77,10 @@ public class Main {
         p.setDisplayInformation(Rabbit.class, rabbit);
         DisplayInformation burrow = new DisplayInformation(Color.blue, "hole-small");
         p.setDisplayInformation(Burrow.class, burrow);
+        DisplayInformation wolf = new DisplayInformation(Color.gray, "wolf");
+        p.setDisplayInformation(Wolf.class, wolf);
+        DisplayInformation bear = new DisplayInformation(Color.yellow, "bear");
+        p.setDisplayInformation(Bear.class, bear);
         p.show();
         for (int i = 0; i < 200; i++) {
             p.simulate();
