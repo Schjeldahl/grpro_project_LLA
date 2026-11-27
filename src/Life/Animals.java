@@ -68,6 +68,7 @@ public abstract class Animals implements Actor {
         energy--;
     }
 
+
     public void die(World w) {
         if (energy <= 0) {
             w.delete(this);
