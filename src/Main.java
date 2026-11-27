@@ -17,7 +17,7 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException{
 
-        Scanner scanner = new Scanner(new File("inputs/week-2/tf2-2.txt"));
+        Scanner scanner = new Scanner(new File("inputs/week-1/t1-2cde.txt"));
 
         int size = Integer.parseInt(scanner.nextLine().trim());
         int delay = 1000;
@@ -55,7 +55,7 @@ public class Main {
                         placement.placeNonBlocking(new Grass());
                         break;
                     case "rabbit":
-                        placement.placeBlocking(new Rabbit(0, 10, null));
+                        placement.placeBlocking(new Rabbit(0, 100, null));
                         break;
                     case "burrow":
                         placement.placeNonBlocking(new Burrow());
