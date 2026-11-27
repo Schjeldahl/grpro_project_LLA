@@ -24,26 +24,24 @@ public abstract class Animals implements Actor {
 
     @Override
     public void act(World w) {
-        goToNest(w);
-        if (!w.isOnTile(this)) {
-            return;
-        }
-        makeNest(w);
-        if (!w.isOnTile(this)) {
+        wakeUp(w);
+        if (!w.contains(this) || !w.isOnTile(this)) {
             return;
         }
         age();
         walk(w);
-        eat(w);
-        mate(w);
         die(w);
     }
-    public void goToNest(World w) {
+    public void wakeUp(World w) {
         if (!w.isOnTile(this)) {
             if (w.isNight()) {
                 return;
             }
 
+            if(!hasHomeBurrow(w)) {
+                w.delete(this);
+                return;
+            }
             Location entrance = w.getLocation(homeBurrow);
             Set<Location> exits = w.getEmptySurroundingTiles(entrance);
 
@@ -53,67 +51,12 @@ public abstract class Animals implements Actor {
         }
     }
 
-    public void makeNest(World w) {
-        if (homeBurrow == null) {
-            List<Burrow> burrows = new ArrayList<>();
 
-            for (var entry : w.getEntities().entrySet()) {
-                if (entry.getKey() instanceof Burrow burrow && entry.getValue() != null) {
-                    burrows.add(burrow);
-                }
-            }
-            if (!burrows.isEmpty()) {
-                homeBurrow = burrows.get(r.nextInt(burrows.size()));
-            }
-
-        }
-
-
-        if (w.isNight() && homeBurrow != null) {
-            Location entrance = w.getLocation(homeBurrow);
-
-            if (w.getLocation(this).equals(entrance)) {
-                w.remove(this);
-            } else if (w.getTile(entrance) == homeBurrow) {
-                w.move(this, entrance);
-                w.remove(this);
-            }
-        }
-
-    }
 
     public void age() {
         age++;
     }
 
-    public void eat(World w) {
-        if (w.getNonBlocking(w.getLocation(this)) instanceof Grass) {
-            w.delete(w.getNonBlocking(w.getLocation(this)));
-            if (age <= 3) {
-                energy = energy + 3;
-            } else if (age <= 6) {
-                energy = energy + 2;
-            } else {
-                energy = energy + 1;
-            }
-            if (r.nextInt(10) > 8) {
-                w.setTile(w.getLocation(this), new Burrow());
-            }
-        }
-    }
-
-    public void mate(World w) {
-        for (Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
-            Set<Location> empty = w.getEmptySurroundingTiles(w.getLocation(this));
-            List<Location> list2 = new ArrayList<>(empty);
-            if (w.getTile(neighbour) instanceof Rabbit) {
-                if (!list2.isEmpty() && r.nextInt(10) > 8) {
-                    Location l = list2.get(r.nextInt(list2.size()));
-                    w.setTile(l, new Rabbit(0, 10, null));
-                }
-            }
-        }
-    }
 
     public void walk(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
@@ -129,5 +72,24 @@ public abstract class Animals implements Actor {
         if (energy <= 0) {
             w.delete(this);
         }
+    }
+    protected int getAge() {
+        return age;
+    }
+
+    protected void gainEnergy(int amount) {
+        energy += amount;
+    }
+
+    protected Burrow getHomeBurrow() {
+        return homeBurrow;
+    }
+
+    protected void setHomeBurrow(Burrow burrow) {
+        homeBurrow = burrow;
+    }
+
+    protected boolean hasHomeBurrow(World w) {
+        return homeBurrow != null && w.contains(homeBurrow) && w.isOnTile(homeBurrow);
     }
 }
