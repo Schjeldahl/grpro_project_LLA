@@ -54,6 +54,7 @@ public class Rabbit extends Animals {
         }
     }
 
+
     private void findOrDigHomeBurrow(World w) {
         if (hasHomeBurrow(w)) {
             return;
