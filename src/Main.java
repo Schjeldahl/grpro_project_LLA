@@ -3,6 +3,7 @@ import java.util.*;
 
 import Life.Grass;
 import Life.Burrow;
+import Life.WolfBurrow;
 import Life.Rabbit;
 import Life.Wolf;
 import Life.Bear;
@@ -27,7 +28,7 @@ public class Main {
         World w = p.getWorld();
         Placement placement = new Placement(w, size);
 
-        //Indlæsning og placering af objeketer (se evt. Placement.java)
+        //Indlæsning og placering af objekter (se evt. Placement.java)
 
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
@@ -79,6 +80,8 @@ public class Main {
         p.setDisplayInformation(Burrow.class, burrow);
         DisplayInformation wolf = new DisplayInformation(Color.gray, "wolf");
         p.setDisplayInformation(Wolf.class, wolf);
+        DisplayInformation wolfBurrow = new DisplayInformation(Color.blue, "hole");
+        p.setDisplayInformation(WolfBurrow.class, wolfBurrow);
         DisplayInformation bear = new DisplayInformation(Color.yellow, "bear");
         p.setDisplayInformation(Bear.class, bear);
         p.show();
