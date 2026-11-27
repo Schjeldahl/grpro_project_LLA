@@ -10,13 +10,24 @@ import java.util.Set;
 import java.util.Random;
 
 public class Rabbit implements Actor {
-    private int  age = 0;
+    private int age = 0;
     private int energy = 10;
     private Burrow homeBurrow;
     Random r = new Random();
-    @Override
-    public void act(World w){
 
+    @Override
+    public void act(World w) {
+        goToNest(w);
+        makeNest(w);
+        age();
+        walk(w);
+
+        eat(w);
+        mate(w);
+        die(w);
+    }
+
+    public void goToNest(World w) {
         if (!w.isOnTile(this)) {
             if (w.isNight()) {
                 return;
@@ -28,11 +39,11 @@ public class Rabbit implements Actor {
             if (!exits.isEmpty()) {
                 w.setTile(exits.iterator().next(), this);
             }
-
-            return;
         }
+    }
 
-        if (homeBurrow == null){
+    public void makeNest(World w) {
+        if (homeBurrow == null) {
             List<Burrow> burrows = new ArrayList<>();
 
             for (var entry : w.getEntities().entrySet()) {
@@ -56,47 +67,56 @@ public class Rabbit implements Actor {
                 w.move(this, entrance);
                 w.remove(this);
             }
-
-            return;
         }
 
-        Set<Location> neighbours = w.getEmptySurroundingTiles();
-        List<Location> list = new ArrayList<>(neighbours);
+    }
+
+    public void age() {
         age++;
-        if(!list.isEmpty()) {
-            Location l = list.get(r.nextInt(list.size()));
-            w.move(this, l);
-        }
-        if(w.getNonBlocking(w.getLocation(this)) instanceof Grass) {
+    }
+
+    public void eat(World w) {
+        if (w.getNonBlocking(w.getLocation(this)) instanceof Grass) {
             w.delete(w.getNonBlocking(w.getLocation(this)));
-            if(age <= 3) {
+            if (age <= 3) {
                 energy = energy + 3;
-            } else if(age <= 6) {
+            } else if (age <= 6) {
                 energy = energy + 2;
-            }else {
+            } else {
                 energy = energy + 1;
             }
-            if(r.nextInt(10) > 8) {
+            if (r.nextInt(10) > 8) {
                 w.setTile(w.getLocation(this), new Burrow());
             }
         }
-        for(Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
+    }
+
+    public void mate(World w) {
+        for (Location neighbour : w.getSurroundingTiles(w.getLocation(this))) {
             Set<Location> empty = w.getEmptySurroundingTiles();
             List<Location> list2 = new ArrayList<>(empty);
-            if(w.getTile(neighbour) instanceof Rabbit) {
-                if(!list2.isEmpty() && r.nextInt(10) > 8) {
+            if (w.getTile(neighbour) instanceof Rabbit) {
+                if (!list2.isEmpty() && r.nextInt(10) > 8) {
                     Location l = list2.get(r.nextInt(list2.size()));
                     w.setTile(l, new Rabbit());
                 }
             }
         }
+    }
 
+    public void walk(World w) {
+        Set<Location> neighbours = w.getEmptySurroundingTiles();
+        List<Location> list = new ArrayList<>(neighbours);
+        if (!list.isEmpty()) {
+            Location l = list.get(r.nextInt(list.size()));
+            w.move(this, l);
+        }
         energy--;
-        if(energy == 0) {
+    }
+
+    public void die(World w) {
+        if (energy <= 0) {
             w.delete(this);
         }
-
-
-
     }
 }
